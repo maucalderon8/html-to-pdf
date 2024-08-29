@@ -8,11 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    <div id="content">
-        <h1>Convert HTML to PDF</h1>
-        <p id="html-content">Este contenido será reemplazado por el HTML proporcionado en el parámetro de la URL.</p>
-        <button id="download">Download PDF</button>
-    </div>
+    <div id="content" style="visibility:hidden;"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -22,12 +18,11 @@
 
             if (htmlParam) {
                 // Decodificar el parámetro y establecerlo como el contenido HTML
-                const contentElement = document.getElementById('html-content');
+                const contentElement = document.getElementById('content');
                 contentElement.innerHTML = decodeURIComponent(htmlParam);
-            }
 
-            document.getElementById('download').addEventListener('click', () => {
-                html2canvas(document.getElementById('content')).then(canvas => {
+                // Generar el PDF automáticamente
+                html2canvas(contentElement).then(canvas => {
                     const { jsPDF } = window.jspdf;
                     const doc = new jsPDF();
                     const imgData = canvas.toDataURL('image/png');
@@ -35,7 +30,7 @@
                     doc.addImage(imgData, 'PNG', 10, 10);
                     doc.save('documento.pdf');
                 });
-            });
+            }
         });
     </script>
 </body>
