@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML to PDF Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div id="content">
@@ -12,7 +14,29 @@
         <button id="download">Download PDF</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Obtener el parámetro 'html' de la URL
+            const params = new URLSearchParams(window.location.search);
+            const htmlParam = params.get('html');
+
+            if (htmlParam) {
+                // Decodificar el parámetro y establecerlo como el contenido HTML
+                const contentElement = document.getElementById('html-content');
+                contentElement.innerHTML = decodeURIComponent(htmlParam);
+            }
+
+            document.getElementById('download').addEventListener('click', () => {
+                html2canvas(document.getElementById('content')).then(canvas => {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    const imgData = canvas.toDataURL('image/png');
+
+                    doc.addImage(imgData, 'PNG', 10, 10);
+                    doc.save('documento.pdf');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
